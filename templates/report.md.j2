@@ -1,0 +1,155 @@
+# Java Maintenance Agent Benchmark Report
+
+**Generated:** {{ timestamp }}  
+**Total Runs:** {{ total_runs }}  
+**Models Tested:** {{ models|length }}  
+**Test Cases:** {{ test_cases|length }}
+
+## Executive Summary
+
+This benchmark evaluates {{ models|length }} language models on Java maintenance tasks including fault localization, patch generation, and build/test execution.
+
+### Overall Results
+
+| Metric | Value |
+|--------|-------|
+| Total Runs | {{ total_runs }} |
+| Successful Runs | {{ successful_runs }} |
+| Success Rate | {{ "%.1f"|format(success_rate * 100) }}% |
+| Average Score | {{ "%.1f"|format(average_score) }}/100 |
+| Build Success Rate | {{ "%.1f"|format(build_success_rate * 100) }}% |
+| Test Success Rate | {{ "%.1f"|format(test_success_rate * 100) }}% |
+| Patch Success Rate | {{ "%.1f"|format(patch_success_rate * 100) }}% |
+
+## Model Leaderboard
+
+| Rank | Model | Family | Avg Score | Success Rate | Build Pass | Test Pass | Avg Latency |
+|------|-------|--------|-----------|--------------|------------|-----------|-------------|
+{% for model in model_leaderboard %}
+| {{ loop.index }} | {{ model.name }} | {{ model.family }} | {{ "%.1f"|format(model.avg_score) }} | {{ "%.1f"|format(model.success_rate * 100) }}% | {{ "%.1f"|format(model.build_success_rate * 100) }}% | {{ "%.1f"|format(model.test_success_rate * 100) }}% | {{ model.avg_latency }}s |
+{% endfor %}
+
+## Detailed Model Performance
+
+{% for model in model_leaderboard %}
+### {{ model.name }} ({{ model.family }})
+
+**Overall Score:** {{ "%.1f"|format(model.avg_score) }}/100  
+**Success Rate:** {{ "%.1f"|format(model.success_rate * 100) }}%  
+**Total Runs:** {{ model.total_runs }}
+
+#### Score Breakdown
+- **Fix Success:** {{ "%.1f"|format(model.avg_fix_success) }}/55
+- **Localization:** {{ "%.1f"|format(model.avg_localization) }}/20  
+- **Operations:** {{ "%.1f"|format(model.avg_ops) }}/15
+- **Reliability:** {{ "%.1f"|format(model.avg_reliability) }}/10
+
+#### Success Rates
+- **Build Pass:** {{ "%.1f"|format(model.build_success_rate * 100) }}%
+- **Test Pass:** {{ "%.1f"|format(model.test_success_rate * 100) }}%
+- **Patch Apply:** {{ "%.1f"|format(model.patch_success_rate * 100) }}%
+- **JSON Valid:** {{ "%.1f"|format(model.json_success_rate * 100) }}%
+
+#### Performance Metrics
+- **Average Latency:** {{ model.avg_latency }}s
+- **Average Tokens:** {{ model.avg_tokens }}
+- **Average Cost:** ${{ "%.4f"|format(model.avg_cost) }}
+
+{% endfor %}
+
+## Test Case Analysis
+
+{% for case in test_case_analysis %}
+### {{ case.case_id }} ({{ case.project }})
+
+**Suite:** {{ case.suite }}  
+**Build System:** {{ case.build_system }}  
+**Total Runs:** {{ case.total_runs }}
+
+#### Best Performing Models
+{% for model in case.top_models[:3] %}
+{{ loop.index }}. **{{ model.name }}** - {{ "%.1f"|format(model.score) }}/100
+{% endfor %}
+
+#### Success Rates by Model
+| Model | Score | Build Pass | Test Pass | Patch Apply |
+|-------|-------|------------|-----------|-------------|
+{% for model in case.model_results %}
+| {{ model.name }} | {{ "%.1f"|format(model.score) }} | {{ "%.1f"|format(model.build_success_rate * 100) }}% | {{ "%.1f"|format(model.test_success_rate * 100) }}% | {{ "%.1f"|format(model.patch_success_rate * 100) }}% |
+{% endfor %}
+
+{% endfor %}
+
+## Score Distribution
+
+### Overall Score Distribution
+- **0-20:** {{ score_distribution.very_low }} runs ({{ "%.1f"|format(score_distribution.very_low / total_runs * 100) }}%)
+- **21-40:** {{ score_distribution.low }} runs ({{ "%.1f"|format(score_distribution.low / total_runs * 100) }}%)
+- **41-60:** {{ score_distribution.medium }} runs ({{ "%.1f"|format(score_distribution.medium / total_runs * 100) }}%)
+- **61-80:** {{ score_distribution.high }} runs ({{ "%.1f"|format(score_distribution.high / total_runs * 100) }}%)
+- **81-100:** {{ score_distribution.excellent }} runs ({{ "%.1f"|format(score_distribution.excellent / total_runs * 100) }}%)
+
+## Performance Analysis
+
+### Latency vs Score Correlation
+- **Fast & Good (≤120s, ≥60 score):** {{ performance_analysis.fast_good }} runs
+- **Fast & Poor (≤120s, <60 score):** {{ performance_analysis.fast_poor }} runs  
+- **Slow & Good (>120s, ≥60 score):** {{ performance_analysis.slow_good }} runs
+- **Slow & Poor (>120s, <60 score):** {{ performance_analysis.slow_poor }} runs
+
+### Token Efficiency
+- **Efficient (≤2000 tokens, ≥60 score):** {{ performance_analysis.efficient_good }} runs
+- **Inefficient (>2000 tokens, <60 score):** {{ performance_analysis.inefficient_poor }} runs
+
+## Error Analysis
+
+### Common Failure Modes
+{% for error_type, count in error_analysis.items() %}
+- **{{ error_type }}:** {{ count }} occurrences
+{% endfor %}
+
+### Build System Performance
+| Build System | Total Runs | Success Rate | Avg Score |
+|--------------|------------|--------------|-----------|
+{% for build_sys in build_system_analysis %}
+| {{ build_sys.name }} | {{ build_sys.total_runs }} | {{ "%.1f"|format(build_sys.success_rate * 100) }}% | {{ "%.1f"|format(build_sys.avg_score) }} |
+{% endfor %}
+
+## Recommendations
+
+### Top Performing Models
+1. **{{ model_leaderboard[0].name }}** - Best overall performance with {{ "%.1f"|format(model_leaderboard[0].avg_score) }}/100 average score
+2. **{{ model_leaderboard[1].name if model_leaderboard|length > 1 else "N/A" }}** - {{ "%.1f"|format(model_leaderboard[1].avg_score) if model_leaderboard|length > 1 else "N/A" }}/100 average score
+
+### Key Insights
+- **Best Build System:** {{ best_build_system.name }} with {{ "%.1f"|format(best_build_system.success_rate * 100) }}% success rate
+- **Most Reliable Model:** {{ most_reliable_model.name }} with {{ "%.1f"|format(most_reliable_model.avg_reliability) }}/10 reliability score
+- **Fastest Model:** {{ fastest_model.name }} with {{ fastest_model.avg_latency }}s average latency
+
+### Areas for Improvement
+- **Localization Accuracy:** Only {{ "%.1f"|format(avg_localization_accuracy * 100) }}% of runs achieved correct top-1 localization
+- **Patch Application:** {{ "%.1f"|format(patch_apply_success_rate * 100) }}% of patches applied successfully
+- **Test Pass Rate:** {{ "%.1f"|format(overall_test_pass_rate * 100) }}% of runs passed all tests
+
+## Methodology
+
+### Scoring System
+- **Fix Success (55 points):** Build pass (20) + Test pass (25) + Minimality (10)
+- **Localization (20 points):** Top-1 correct (12) + Top-3 hit (8)  
+- **Operations (15 points):** Latency efficiency (10) + Token efficiency (5)
+- **Reliability (10 points):** JSON validity (5) + Patch validity (5)
+
+### Test Cases
+- **{{ test_cases|length }} test cases** from real Java projects
+- **Maven and Gradle** build systems
+- **Real failure logs** from build/test failures
+- **Ground truth** localization data
+
+### Models Evaluated
+{% for model in models %}
+- **{{ model.name }}** ({{ model.family }}) - {{ model.model }}
+{% endfor %}
+
+---
+
+*Report generated by Java Maintenance Agent Benchmark v0.1.0*
